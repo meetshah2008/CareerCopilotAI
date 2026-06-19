@@ -8,25 +8,74 @@
   let debounceTimer = null;
 
   function extractQuestion(field) {
-    if (field.placeholder && field.placeholder.length > 3) return field.placeholder;
-    if (field.getAttribute("aria-label")) return field.getAttribute("aria-label");
+    const genericPlaceholders = [
+      'your answer',
+      'type your answer',
+      'answer',
+      'your response',
+      'write your answer',
+      'your reply',
+      'your response here'
+    ];
 
+    // 1) Prefer a meaningful placeholder, but ignore generic placeholders like "Your answer"
+    const placeholder = (field.placeholder || '').trim();
+    if (placeholder && placeholder.length > 3 && !genericPlaceholders.includes(placeholder.toLowerCase())) {
+      return placeholder;
+    }
+
+    // 2) aria-label is explicit
+    const aria = (field.getAttribute && field.getAttribute('aria-label')) || '';
+    if (aria && aria.trim().length > 3) return aria.trim();
+
+    // 3) Associated <label for="id">
     const id = field.id;
     if (id) {
       const label = document.querySelector(`label[for="${id}"]`);
-      if (label) return label.textContent.trim();
+      if (label && label.textContent.trim().length > 3) return label.textContent.trim();
     }
 
+    // 4) Look for nearby label-like elements in common form containers
     const parent = field.closest(".form-group, .field, .question, [class*='field'], [class*='question']");
     if (parent) {
       const label = parent.querySelector("label, .label, legend, [class*='label']");
-      if (label) return label.textContent.trim();
+      if (label && label.textContent.trim().length > 3) return label.textContent.trim();
     }
 
-    const prev = field.previousElementSibling;
-    if (prev && prev.textContent.trim().length > 3) return prev.textContent.trim();
+    // 5) Google Forms special handling: walk up and look for question title elements
+    let node = field;
+    for (let i = 0; i < 6; i++) {
+      node = node.parentElement;
+      if (!node) break;
+      const cls = node.className || '';
+      if (typeof cls === 'string' && /freebirdFormviewer|docs-forms|quantumWiz/.test(cls)) {
+        // common Google Forms title classes (best-effort) or any heading-like element
+        const title = node.querySelector('.freebirdFormviewerComponentsQuestionBaseTitle, [role="heading"], h1, h2, h3');
+        if (title && title.textContent.trim().length > 3) return title.textContent.trim();
+      }
+    }
 
-    if (field.name) return field.name.replace(/[_-]/g, " ");
+    // 6) Fallback: scan previous siblings for visible text
+    let sib = field.previousElementSibling;
+    while (sib) {
+      const txt = sib.textContent && sib.textContent.trim();
+      if (txt && txt.length > 3 && !genericPlaceholders.includes(txt.toLowerCase())) return txt;
+      sib = sib.previousElementSibling;
+    }
+
+    // 7) Also check parent's previous siblings and ancestors' previous siblings
+    node = field.parentElement;
+    for (let i = 0; i < 4 && node; i++) {
+      const prev = node.previousElementSibling;
+      if (prev) {
+        const txt = prev.textContent && prev.textContent.trim();
+        if (txt && txt.length > 3 && !genericPlaceholders.includes(txt.toLowerCase())) return txt;
+      }
+      node = node.parentElement;
+    }
+
+    // 8) Last-resort: use field name
+    if (field.name) return field.name.replace(/[_-]/g, ' ');
 
     return null;
   }
