@@ -1,0 +1,127 @@
+/* ── CareerCopilot AI — Injected Styles ────────────────────────────── */
+
+/* Floating AI button that appears near focused form fields */
+.cc-ai-btn {
+  position: absolute;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.cc-ai-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.55);
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+}
+
+.cc-ai-btn:active {
+  transform: translateY(0);
+}
+
+.cc-ai-btn .cc-sparkle {
+  font-size: 14px;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+
+.cc-ai-btn.cc-loading {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.cc-ai-btn.cc-loading::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cc-spin 0.6s linear infinite;
+}
+
+@keyframes cc-spin {
+  to { transform: rotate(360deg); }
+}
+
+.cc-tone-select {
+  position: absolute;
+  z-index: 2147483647;
+  padding: 4px 8px;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  background: #1e1b4b;
+  color: #e0e7ff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cc-tone-select:focus {
+  border-color: #6366f1;
+}
+
+.cc-filled {
+  outline: 2px solid #6366f1 !important;
+  outline-offset: 2px;
+  transition: outline-color 0.3s ease;
+}
+
+.cc-filled:focus {
+  outline-color: #8b5cf6 !important;
+}
+
+.cc-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  color: #e0e7ff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  animation: cc-slide-in 0.3s ease-out;
+}
+
+.cc-toast.cc-toast-error {
+  background: linear-gradient(135deg, #450a0a, #7f1d1d);
+  color: #fecaca;
+}
+
+@keyframes cc-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cc-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
